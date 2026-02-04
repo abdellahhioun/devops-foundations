@@ -1,0 +1,24 @@
+# Environment variables
+.env
+
+# Local certificates (mkcert)
+*.pem
+*.key
+certs/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+
+# Docker
+.docker/
