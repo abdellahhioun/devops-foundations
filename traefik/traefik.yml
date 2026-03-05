@@ -20,7 +20,7 @@ providers:
     exposedByDefault: false
     network: frontend
   file:
-    directory: /etc/traefik/dynamic
+    filename: /etc/traefik/dynamic/middlewares.yml
     watch: true
 
 tls:

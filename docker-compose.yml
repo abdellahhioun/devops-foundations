@@ -37,6 +37,9 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.middlewares=security-headers@file,gzip-compress@file"
+      - "traefik.http.routers.frontend.service=frontend-svc"
+      - "traefik.http.services.frontend-svc.loadbalancer.server.port=8080"
+      - "traefik.docker.network=frontend"
 
   backend:
     build:
@@ -62,6 +65,9 @@ services:
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls=true"
       - "traefik.http.routers.backend.middlewares=security-headers@file,gzip-compress@file,api-ratelimit@file"
+      - "traefik.http.routers.backend.service=backend-svc"
+      - "traefik.http.services.backend-svc.loadbalancer.server.port=3000"
+      - "traefik.docker.network=frontend"
 
   database:
     image: postgres:15-alpine
@@ -104,8 +110,9 @@ services:
       - "traefik.http.routers.mail.rule=Host(`mail.localhost`)"
       - "traefik.http.routers.mail.entrypoints=websecure"
       - "traefik.http.routers.mail.tls=true"
-      - "traefik.http.services.mail.loadbalancer.server.port=8025"
       - "traefik.http.routers.mail.middlewares=security-headers@file"
+      - "traefik.http.routers.mail.service=mail-svc"
+      - "traefik.http.services.mail-svc.loadbalancer.server.port=8025"
 
   adminer:
     image: adminer:latest
@@ -118,6 +125,8 @@ services:
       - "traefik.http.routers.dbadmin.entrypoints=websecure"
       - "traefik.http.routers.dbadmin.tls=true"
       - "traefik.http.routers.dbadmin.middlewares=security-headers@file,admin-auth@file"
+      - "traefik.http.routers.dbadmin.service=adminer-svc"
+      - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
 
 networks:
   frontend:
