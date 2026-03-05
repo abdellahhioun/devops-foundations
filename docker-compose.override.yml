@@ -1,0 +1,12 @@
+services:
+  frontend:
+    volumes:
+      - ./src/frontend:/usr/share/nginx/html:ro
+
+  backend:
+    volumes:
+      - ./src/backend:/app
+      - /app/node_modules
+    command: npm run start
+    environment:
+      - NODE_ENV=development
