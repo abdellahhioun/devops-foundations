@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Foundations – Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+        .dashboard {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 { color: #0066cc; margin-bottom: 2rem; text-align: center; }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .status-card {
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .status-indicator { font-weight: bold; margin-top: 0.5rem; }
+        .status-ok { color: #10b981; }
+        .status-down { color: #ef4444; }
+        
+        .counter-section {
+            text-align: center;
+            padding: 1rem;
+            background: #eff6ff;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        #visit-count { font-size: 1.5rem; font-weight: bold; color: #1d4ed8; }
+
+        .contact-form {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 2rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+        button:hover { background: #0052a3; }
+        #form-message { margin-top: 1rem; text-align: center; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>🚀 DevOps Foundations – Dashboard</h1>
+        
+        <div class="status-grid">
+            <div class="status-card">
+                <h3>Backend API</h3>
+                <div id="status-backend" class="status-indicator">⏳ Checking...</div>
+            </div>
+            <div class="status-card">
+                <h3>Database</h3>
+                <div id="status-db" class="status-indicator">⏳ Checking...</div>
+            </div>
+            <div class="status-card">
+                <h3>Cache (Redis)</h3>
+                <div id="status-cache" class="status-indicator">⏳ Checking...</div>
+            </div>
+        </div>
+
+        <div class="counter-section">
+            <p>Nombre de visites totales (depuis Redis) :</p>
+            <div id="visit-count">--</div>
+        </div>
+
+        <div class="contact-form">
+            <h2>📧 Contact Test (MailHog)</h2>
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" placeholder="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" rows="3" placeholder="Hello from the dashboard!" required></textarea>
+                </div>
+                <button type="submit" id="submit-btn">Send Test Email</button>
+            </form>
+            <div id="form-message"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api.localhost'; // Using the Traefik domain
+
+        async function checkStatuses() {
+            // Check Backend & Counter
+            try {
+                const cacheRes = await fetch(`${API_URL}/cache`);
+                const cacheData = await cacheRes.json();
+                document.getElementById('status-backend').innerHTML = '🟢 OK';
+                document.getElementById('status-backend').className = 'status-indicator status-ok';
+                document.getElementById('status-cache').innerHTML = '🟢 OK';
+                document.getElementById('status-cache').className = 'status-indicator status-ok';
+                document.getElementById('visit-count').innerText = cacheData.visits;
+            } catch (e) {
+                document.getElementById('status-backend').innerHTML = '🔴 DOWN';
+                document.getElementById('status-backend').className = 'status-indicator status-down';
+                document.getElementById('status-cache').innerHTML = '🔴 DOWN';
+                document.getElementById('status-cache').className = 'status-indicator status-down';
+            }
+
+            // Check DB
+            try {
+                const dbRes = await fetch(`${API_URL}/db`);
+                const dbData = await dbRes.json();
+                if (dbData.status === 'connected') {
+                    document.getElementById('status-db').innerHTML = '🟢 OK';
+                    document.getElementById('status-db').className = 'status-indicator status-ok';
+                } else {
+                    throw new Error('DB down');
+                }
+            } catch (e) {
+                document.getElementById('status-db').innerHTML = '🔴 DOWN';
+                document.getElementById('status-db').className = 'status-indicator status-down';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const msg = document.getElementById('form-message');
+            btn.disabled = true;
+            msg.innerText = 'Sending...';
+
+            try {
+                const res = await fetch(`${API_URL}/contact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        message: document.getElementById('message').value
+                    })
+                });
+                const data = await res.json();
+                msg.style.color = '#10b981';
+                msg.innerText = '✅ Email sent! Check mail.localhost';
+            } catch (e) {
+                msg.style.color = '#ef4444';
+                msg.innerText = '❌ Failed to send email.';
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        // Initial check and every 10 seconds
+        checkStatuses();
+        setInterval(checkStatuses, 10000);
+    </script>
+</body>
+</html>
