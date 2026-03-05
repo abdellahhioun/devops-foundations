@@ -1,0 +1,17 @@
+{
+  "name": "devops-foundations-backend",
+  "version": "1.0.0",
+  "description": "API Node.js pour CloudNative Labs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
+    "redis": "^4.7.0"
+  }
+}
