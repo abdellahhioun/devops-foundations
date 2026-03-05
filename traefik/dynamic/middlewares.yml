@@ -1,0 +1,32 @@
+http:
+  middlewares:
+    # 1. Rate Limiting for API (100 req/min)
+    api-ratelimit:
+      rateLimit:
+        average: 100
+        burst: 50
+
+    # 2. Security Headers (HSTS, X-Frame-Options, etc.)
+    security-headers:
+      headers:
+        sslRedirect: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        frameDeny: true
+        contentTypeNosniff: true
+        browserXssFilter: true
+        referrerPolicy: "same-origin"
+
+    # 3. Gzip Compression
+    gzip-compress:
+      compress: {}
+
+    # 4. Basic Auth (Adminer & Dashboard)
+    # The TRAEFIK_DASHBOARD_AUTH is passed as an env var from .env
+    # Format: user:hashedpassword
+    admin-auth:
+      basicAuth:
+        users:
+          - "admin:$$apr1$$8EVDtcWK$$c5Q.h2.w8.w9.w1.w2.w3" # Placeholder (matches .env.example)
