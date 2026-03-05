@@ -6,8 +6,13 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: 'https://frontend.localhost',
+  optionsSuccessStatus: 200
+};
 app.use(express.json());
+app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000;
 const VERSION = "1.0.0";
