@@ -11,8 +11,8 @@ const corsOptions = {
   origin: 'https://frontend.localhost',
   optionsSuccessStatus: 200
 };
-app.use(express.json());
 app.use(cors(corsOptions));
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 const VERSION = "1.0.0";
