@@ -33,7 +33,7 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`frontend.localhost`)"
+      - "traefik.http.routers.frontend.rule=Host(`app.localhost`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.middlewares=security-headers@file,gzip-compress@file"
@@ -110,9 +110,10 @@ services:
       - "traefik.http.routers.mail.rule=Host(`mail.localhost`)"
       - "traefik.http.routers.mail.entrypoints=websecure"
       - "traefik.http.routers.mail.tls=true"
-      - "traefik.http.routers.mail.middlewares=security-headers@file"
+      # No security-headers: HSTS/sslRedirect can confuse the MailHog UI; SSE needs long upstream timeouts.
       - "traefik.http.routers.mail.service=mail-svc"
       - "traefik.http.services.mail-svc.loadbalancer.server.port=8025"
+      - "traefik.docker.network=devops-foundations_frontend"
 
   adminer:
     image: adminer:latest
@@ -127,6 +128,7 @@ services:
       - "traefik.http.routers.dbadmin.middlewares=security-headers@file,admin-auth@file"
       - "traefik.http.routers.dbadmin.service=adminer-svc"
       - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
+      - "traefik.docker.network=devops-foundations_frontend"
 
 networks:
   frontend:

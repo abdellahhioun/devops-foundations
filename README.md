@@ -30,7 +30,7 @@ Une fois la stack lancée, vous pouvez accéder aux services via les URLs suivan
 
 | Service | URL | Credentials (si applicable) |
 | :--- | :--- | :--- |
-| **Frontend Dashboard** | [https://frontend.localhost](https://frontend.localhost) | - |
+| **Frontend Dashboard** | [https://app.localhost](https://app.localhost) | - |
 | **Backend API** | [https://api.localhost/health](https://api.localhost/health) | - |
 | **Traefik Dashboard** | [https://traefik.localhost](https://traefik.localhost) | `admin` / `admin` |
 | **Adminer (DB Admin)** | [https://db.localhost](https://db.localhost) | `admin` / `admin` |

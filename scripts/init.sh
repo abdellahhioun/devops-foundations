@@ -50,7 +50,7 @@ mkcert -key-file certs/local-key.pem \
        -cert-file certs/local-cert.pem \
        "localhost" \
        "*.localhost" \
-       "frontend.localhost" \
+       "app.localhost" \
        "api.localhost" \
        "traefik.localhost" \
        "db.localhost" \

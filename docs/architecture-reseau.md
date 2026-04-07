@@ -39,7 +39,7 @@ Traefik manages traffic through three main concepts:
 
 ## 4. Security Justification
 
-- **Non-Root Containers**: Both frontend and backend services run as a non-privileged `node` user to mitigate the impact of a potential container breakout.
+- **Non-Root Containers**: Frontend and backend production images run as **UID/GID 1000:1000** (non-root) to limit the impact of a potential container breakout.
 - **SSL/TLS**: All traffic is encrypted using HTTPS. Traefik terminates SSL at the edge, ensuring unencrypted traffic never leaves the Docker network.
 - **Multi-Stage Builds**: We use multi-stage Dockerfiles to minimize the image size and remove unnecessary build tools from the final production environment.
 - **Environment Parity**: The use of `docker-compose.override.yml` and `docker-compose.prod.yml` ensures that production constraints (resource limits, replicas) are enforced while keeping the development environment flexible.

@@ -4,6 +4,12 @@ api:
 
 accessLog: {}
 
+# Traefik → upstream HTTP: longer idle keep-alive helps MailHog’s EventSource
+# (/api/v1/events); static config only supports dial/responseHeader/idleConn (no readIdle).
+serversTransport:
+  forwardingTimeouts:
+    idleConnTimeout: 1h
+
 entryPoints:
   web:
     address: ":80"
@@ -15,17 +21,16 @@ entryPoints:
 
   websecure:
     address: ":443"
+    # Long-lived browser connections (e.g. MailHog EventSource) vs default ~180s idle.
+    transport:
+      respondingTimeouts:
+        idleTimeout: 1h
 
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: frontend
+    network: devops-foundations_frontend
   file:
     filename: /etc/traefik/dynamic/middlewares.yml
     watch: true
-
-tls:
-  certificates:
-    - certFile: /certs/local-cert.pem
-      keyFile: /certs/local-key.pem

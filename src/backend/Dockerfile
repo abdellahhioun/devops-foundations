@@ -18,11 +18,11 @@ WORKDIR /app
 
 #sécurity 
 
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/index.js ./index.js
-COPY --from=builder --chown=node:node /app/package.json ./package.json
+COPY --from=builder --chown=1000:1000 /app/node_modules ./node_modules
+COPY --from=builder --chown=1000:1000 /app/index.js ./index.js
+COPY --from=builder --chown=1000:1000 /app/package.json ./package.json
 
-USER node
+USER 1000:1000
 
 LABEL org.opencontainers.image.title="Cloudnative Lab - Backend"
 LABEL org.opencontainers.image.description="API Node.js pour les fondations DevOps"
