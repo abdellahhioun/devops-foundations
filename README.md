@@ -2,49 +2,59 @@
 
 Ce projet est une infrastructure de référence conteneurisée démontrant les fondamentaux DevOps : microservices, reverse proxy (Traefik), sécurité, et scalabilité.
 
-## 🚀 État du projet (Progress Tracking)
+---
 
-Nous suivons l'implémentation basée sur le document `DevOps Foundations.pdf`.
+## 🚀 État du projet (100% DONE)
 
-### ✅ Ce qui a été fait
-- **Structure du projet** : Arborescence complète créée selon les exigences du CTO.
-- **Workflow Git & Docs** : 
-  - [docs/merge-vs-rebase.md](docs/merge-vs-rebase.md) rédigé et stylisé.
-  - [.gitignore](.gitignore) configuré pour exclure `.env` et les certificats SSL.
-- **Services Applicatifs (Backend)** : 
-  - API Node.js fonctionnelle avec les 5 routes requises.
-  - Dockerfile multi-stage et optimisé.
-- **Services Applicatifs (Frontend)** : 
-  - Dashboard dynamique fonctionnel (appels API, Redis counter, formulaire MailHog).
-  - Dockerfile multi-stage et optimisé.
-- **Infrastructure** : 
-  - **Déploiement réussi** : Toute la stack est opérationnelle via `docker-compose`.
-  - **Orchestration** : Healthchecks et dépendances (`depends_on`) configurés pour un démarrage propre.
-  - **Reverse Proxy** : Traefik configuré avec HTTPS, Middlewares (Rate-limit, Security Headers) et Dashboard sécurisé.
-  - **Multi-environnement** : Fichiers `override.yml` (dev) et `prod.yml` (replicas, limits) implémentés.
-- **Automatisation** : 
-  - [scripts/init.sh](scripts/init.sh) opérationnel.
+Ce projet implémente l'intégralité des exigences spécifiées dans le document `DevOps Foundations.pdf`.
 
-### 🛠️ Ce qu'il reste à faire
-- **Partie 1 : Workflow Git**
-  - [ ] Finaliser [CONTRIBUTING.md](CONTRIBUTING.md) (stratégie GitFlow, conventions de commits).
-- **Partie 4 : Documentation & Démo**
-  - [ ] Rédiger [docs/architecture-reseau.md](docs/architecture-reseau.md).
-  - [ ] Créer le schéma d'architecture (`schema-architecture.png`).
-  - [ ] Préparer le screencast de démonstration.
+### ✅ Points Forts Techniques
+- **Workflow Git & Documentation** : 
+  - [CONTRIBUTING.md](CONTRIBUTING.md) : Stratégie GitFlow et conventions de commits.
+  - [docs/merge-vs-rebase.md](docs/merge-vs-rebase.md) : Analyse comparative détaillée.
+  - [docs/architecture-reseau.md](docs/architecture-reseau.md) : Documentation de l'isolation réseau.
+- **Services Applicatifs** : 
+  - **Backend (Node.js)** : API REST avec 5 routes, CORS configuré, multi-stage Dockerfile (Alpine), Healthchecks.
+  - **Frontend (Nginx)** : Dashboard dynamique, Healthchecks, optimisation de cache Docker.
+- **Infrastructure & Proxy** : 
+  - **Traefik v3** : SSL/TLS auto-généré, Rate Limiting, Security Headers, Gzip.
+  - **Orchestration** : Docker Compose multi-environnements (base, override, prod).
+  - **Isolation Réseau** : Séparation stricte entre les réseaux `frontend` et `backend`.
+- **Automatisation** : Script d'initialisation [scripts/init.sh](scripts/init.sh).
+
+---
+
+## 🔗 Accès aux Services (Localhost)
+
+Une fois la stack lancée, vous pouvez accéder aux services via les URLs suivantes :
+
+| Service | URL | Credentials (si applicable) |
+| :--- | :--- | :--- |
+| **Frontend Dashboard** | [https://app.localhost](https://app.localhost) | - |
+| **Backend API** | [https://api.localhost/health](https://api.localhost/health) | - |
+| **Traefik Dashboard** | [https://traefik.localhost](https://traefik.localhost) | `admin` / `admin` |
+| **Adminer (DB Admin)** | [https://db.localhost](https://db.localhost) | `admin` / `admin` |
+| **MailHog (Emails)** | [https://mail.localhost](https://mail.localhost) | - |
 
 ---
 
 ## 🛠️ Installation Rapide
 
-1. Exécutez le script d'initialisation :
+1. **Prérequis** : Assurez-vous d'avoir `docker`, `docker-compose` et `mkcert` installés.
+2. **Initialisation** :
    ```bash
    ./scripts/init.sh
    ```
-2. Configurez votre fichier `.env` avec vos credentials.
-3. Lancez l'infrastructure :
+3. **Configuration** : Copiez le fichier `.env.example` vers `.env` et ajustez vos variables.
+4. **Lancement** :
    ```bash
-   docker-compose up -d
+   docker-compose up -d --build
    ```
 
-Pour plus de détails sur le plan d'action, consultez [docs/project-plan.md](docs/project-plan.md).
+---
+
+## 📄 Documentation Complète
+- [Plan d'action détaillé](docs/project-plan.md)
+- [Guide de contribution](CONTRIBUTING.md)
+- [Architecture réseau et sécurité](docs/architecture-reseau.md)
+- [Merge vs Rebase : Analyse technique](docs/merge-vs-rebase.md)

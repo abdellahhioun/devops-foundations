@@ -119,21 +119,34 @@
     <script>
         const API_URL = 'https://api.localhost'; // Using the Traefik domain
 
-        async function checkStatuses() {
-            // Check Backend & Counter
+        async function updateVisitCounter(increment = false) {
             try {
-                const cacheRes = await fetch(`${API_URL}/cache`);
+                const endpoint = increment ? '/cache' : '/cache/status';
+                const cacheRes = await fetch(`${API_URL}${endpoint}`);
                 const cacheData = await cacheRes.json();
-                document.getElementById('status-backend').innerHTML = '🟢 OK';
-                document.getElementById('status-backend').className = 'status-indicator status-ok';
                 document.getElementById('status-cache').innerHTML = '🟢 OK';
                 document.getElementById('status-cache').className = 'status-indicator status-ok';
                 document.getElementById('visit-count').innerText = cacheData.visits;
             } catch (e) {
-                document.getElementById('status-backend').innerHTML = '🔴 DOWN';
-                document.getElementById('status-backend').className = 'status-indicator status-down';
                 document.getElementById('status-cache').innerHTML = '🔴 DOWN';
                 document.getElementById('status-cache').className = 'status-indicator status-down';
+            }
+        }
+
+        async function checkStatuses() {
+            // Check backend API
+            try {
+                const backendRes = await fetch(`${API_URL}/health`);
+                const backendData = await backendRes.json();
+                if (backendData.status === 'ok') {
+                    document.getElementById('status-backend').innerHTML = '🟢 OK';
+                    document.getElementById('status-backend').className = 'status-indicator status-ok';
+                } else {
+                    throw new Error('Backend down');
+                }
+            } catch (e) {
+                document.getElementById('status-backend').innerHTML = '🔴 DOWN';
+                document.getElementById('status-backend').className = 'status-indicator status-down';
             }
 
             // Check DB
@@ -150,6 +163,9 @@
                 document.getElementById('status-db').innerHTML = '🔴 DOWN';
                 document.getElementById('status-db').className = 'status-indicator status-down';
             }
+
+            // Refresh cache status without incrementing visits
+            await updateVisitCounter(false);
         }
 
         // Handle form submission
@@ -180,7 +196,8 @@
             }
         });
 
-        // Initial check and every 10 seconds
+        // Count one visit on first load, then poll statuses without incrementing.
+        updateVisitCounter(true);
         checkStatuses();
         setInterval(checkStatuses, 10000);
     </script>

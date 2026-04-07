@@ -6,7 +6,12 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: 'https://app.localhost',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
@@ -29,11 +34,11 @@ const pool = new Pool({
 
 app.get('/db', async (req, res) => {
     try {
-        const result = await pool.query('SELECT NOW()');
+        const result = await pool.query('SELECT NOW() AS ts');
         res.json({ 
             status: "connected", 
             database: process.env.DB_NAME, 
-            timestamp: result.rows.now 
+            timestamp: result.rows[0].ts 
         });
     } catch (err) {
         res.status(500).json({ status: "down", error: err.message });
@@ -55,6 +60,15 @@ app.get('/cache', async (req, res) => {
     }
 });
 
+app.get('/cache/status', async (req, res) => {
+    try {
+        const visits = Number(await redisClient.get('visits')) || 0;
+        res.json({ status: "ok", visits });
+    } catch (err) {
+        res.status(500).json({ status: "down", error: err.message });
+    }
+});
+
 // 5. Route Contact (MailHog) [5, 1]
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -64,11 +78,15 @@ const transporter = nodemailer.createTransport({
 
 app.post('/contact', async (req, res) => {
     try {
+        const { email, message } = req.body || {};
+        if (!email || !message) {
+            return res.status(400).json({ error: "email and message are required" });
+        }
         await transporter.sendMail({
             from: '"DevOps Team" <noreply@localhost>',
-            to: "test@example.com",
-            subject: "Infrastructure Test",
-            text: "Ceci est un test SMTP via MailHog."
+            to: String(email).trim(),
+            subject: "DevOps Foundations – contact form",
+            text: String(message).trim()
         });
         res.json({ message: "Email sent successfully" });
     } catch (err) {

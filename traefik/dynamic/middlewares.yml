@@ -29,4 +29,9 @@ http:
     admin-auth:
       basicAuth:
         users:
-          - "admin:$$apr1$$8EVDtcWK$$c5Q.h2.w8.w9.w1.w2.w3" # Placeholder (matches .env.example)
+          - "admin:$apr1$jeLt3l.u$M5Z1gIRYea72nNuIJ3BrN/" # admin/admin
+
+tls:
+  certificates:
+    - certFile: /certs/local-cert.pem
+      keyFile: /certs/local-key.pem
